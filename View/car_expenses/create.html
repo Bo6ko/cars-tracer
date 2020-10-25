@@ -1,0 +1,45 @@
+<?php
+
+if ( isset($this->view) ) {
+    extract($this->view->getData());
+}
+
+?>
+
+<a href="/?controller=car_expenses&action=view&car_id=<?= $car_id; ?>">View Expenses for carname ...</a>
+
+<form method="POST" action="?controller=car_expenses&action=create&car_id=<?= $car_id; ?>">
+
+    <div>
+        <label for="expense_title">Enter Title:</label>
+        <input type="text" id="expense_title" name="expense_title" value="<?php echo isset($expense_title) ? $expense_title : '' ?>" placeholder="Expense title"/>
+        <?php 
+            if ( isset($errors['expense_title']) ) {
+                echo '<p class="error">' . $errors['expense_title'] . '</p>';
+            }
+        ?>
+    </div>
+
+    <div>
+        <label for="expense_description">Enter Description:</label>
+        <textarea id="expense_description" name="expense_description" rows="7" cols="50" placeholder="Expense description"><?php echo isset($expense_description) ? $expense_description : '' ?></textarea>
+        <?php 
+            if ( isset($errors['expense_description']) ) {
+                echo '<p class="error">' . $errors['expense_description'] . '</p>';
+            }
+        ?>
+    </div>
+
+    <div>
+        <label for="expense_price">Enter Price:</label>
+        <input type="decimal" id="expense_price" name="expense_price" value="<?php echo isset($expense_price) ? $expense_price : '' ?>" placeholder="Expense Price"/>
+        <?php 
+            if ( isset($errors['expense_price']) ) {
+                echo '<p class="error">' . $errors['expense_price'] . '</p>';
+            }
+        ?>
+    </div>
+
+    <input type="submit" name="create_car_expense" value="Add" />
+
+</form>

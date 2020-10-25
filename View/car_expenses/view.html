@@ -1,0 +1,37 @@
+<?php
+
+if ( isset($this->view) ) {
+    extract($this->view->getData());
+    extract($car);
+}
+
+?>
+
+<a href="/?controller=car_expenses&action=create&car_id=<?php echo $car_id; ?>">Add car Expense</a>
+
+<h1>View Expenses for <span style="color: #1c1cb6;"><?php echo $mark_name . ', model - ' . $model_name . ', Register Number - ' . $car_register_number; ?></span>:</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>#</th>            
+            <th>Title</th>
+            <th>Expense</th>
+            <th>Price</th>
+            <th>Create date</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($car_expenses as $car_expense) : ?>
+        <tr>
+            <td><a href="/?controller=car_expenses&action=edit&car_id=<?= $car_expense['car_id']; ?>&expense_id=<?= $car_expense['expense_id']; ?>"><?php echo $car_expense['expense_id']; ?></a></td>            
+            <td><?php echo $car_expense['expense_title']; ?></td>
+            <td><?php echo $car_expense['expense_description']; ?></td>
+            <td><?php echo $car_expense['expense_price']; ?></td>
+            <td><?php echo $car_expense['expense_create_date']; ?></td>
+            <td class="text-center"><a class="remove error" href="?controller=car_expenses&action=delete&car_id=<?= $car_expense['car_id']; ?>&expense_id=<?= $car_expense['expense_id']; ?>">x</a></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
