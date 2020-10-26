@@ -5,13 +5,40 @@ if ( isset($this->view) ) {
     extract($car);
 }
 
+if ( isset($_SESSION["user_id"]) ) {
+    $user_id = $_SESSION["user_id"];
+}
+
 ?>
 
 <a href="/?controller=car_expenses&action=create&car_id=<?php echo $car_id; ?>">Add car Expense</a>
 
 <h1>View Expenses for <span style="color: #1c1cb6;"><?php echo $mark_name . ', model - ' . $model_name . ', Register Number - ' . $car_register_number; ?></span>:</h1>
 
-<table>
+<label for="year">Choose year: </label>
+<select id="year" name="year">
+    <option value="2020">2020</option>
+    <option value="2019">2019</option>
+    <option value="2018">2018</option>
+    <option value="2017">2017</option>
+    <option value="2016">2016</option>
+</select>
+<div class="months">
+    <span data-key="1">January</span>
+    <span data-key="2">February</span>
+    <span data-key="3">March</span>
+    <span data-key="4">April</span>
+    <span data-key="5">May</span>
+    <span data-key="6">June</span>
+    <span data-key="7">July</span>
+    <span data-key="8">August</span>
+    <span data-key="9">September</span>
+    <span data-key="10">October</span>
+    <span data-key="11">November</span>
+    <span data-key="12">December</span>
+</div>
+
+<table class="car_expense_table">
     <thead>
         <tr>
             <th>#</th>            
@@ -35,3 +62,45 @@ if ( isset($this->view) ) {
     <?php endforeach; ?>
     </tbody>
 </table>
+
+<script>
+
+    $('.months span').on('click', function() {      
+
+        var car_id  = '<?php echo $car_id; ?>';
+        var user_id = '<?php echo $user_id; ?>';
+        var year    = $('#year').val();
+        var month  = $(this).data('key');
+
+        $.ajax({
+            url: '/src/Solver/Ajax.php/?function=filterCarExpenseByMonth',
+            type: 'post',
+            dataType: 'json',
+            data: { 'car_id': car_id, 'user_id': user_id, 'year': year, 'month': month },
+            success: function( data ) {
+                if (data.status) {
+                    var html = '';
+                    console.log(data.results);
+                    $.each(data.results, function(index, result) {
+                        var editURL     = '/?controller=car_expenses&action=edit&car_id='+result["car_id"]+'&expense_id='+result["car_id"];
+                        var deleteURL   = '?controller=car_expenses&action=delete&car_id='+result["car_id"]+'&expense_id='+result["car_id"];                        
+                        html += '<tr>';
+                            html += '<td><a href="'+editURL+'">'+result["expense_id"]+'</a></td>';            
+                            html += '<td>'+result["expense_title"]+'</td>';
+                            html += '<td>'+result["expense_description"]+'</td>';
+                            html += '<td>'+result["expense_price"]+'</td>';
+                            html += '<td>'+result["expense_create_date"]+'</td>';
+                            html += '<td class="text-center"><a class="remove error" href="'+deleteURL+'">x</a></td>';
+                        html += '</tr>';                        
+                    });
+                    $('table.car_expense_table tbody').html(html);
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+            }
+        });
+    });
+
+</script>

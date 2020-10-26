@@ -69,3 +69,13 @@ table th {
 table .text-center {
 	text-align: center;
 }
+.months {
+	margin-bottom: 20px;
+	margin-right: 30px;
+	font-size: 18px;
+}
+.months span {
+	margin-right: 30px;
+	cursor: pointer;
+	color: blue;
+}

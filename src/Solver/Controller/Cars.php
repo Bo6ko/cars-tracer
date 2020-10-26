@@ -11,11 +11,14 @@ class Cars extends Controller {
         if ( !$_SESSION['identity'] ) {
             $request->to('user&action=login');
         }
+        if ( isset($_SESSION["user_id"]) ) {
+            $user_id = $_SESSION["user_id"];
+        }  
 
         $cars = \DB::get()->query('select * from cars as c
                     inner join car_marks as cm on cm.mark_id = c.mark_id
                     inner join car_models as cmod on cmod.model_id = c.model_id
-                    where c.car_status = 0
+                    where c.car_status = 0 and c.user_id = '.$user_id.'
                     order by c.car_id');
 
         $this->view->assign('cars', $cars);
@@ -28,7 +31,9 @@ class Cars extends Controller {
         if ( !$_SESSION['identity'] ) {
             $request->to('user&action=login');
         }
-        $user_id = $_SESSION["user_id"];
+        if ( isset($_SESSION["user_id"]) ) {
+            $user_id = $_SESSION["user_id"];
+        }        
 
         $marks = \DB::get()->query('select mark_id, mark_name from car_marks where mark_status = 0 order by mark_name asc');
         $this->view->assign('marks', $marks);
@@ -43,8 +48,9 @@ class Cars extends Controller {
             $errors = $this->validateFeld($request->getPost());
 
             if ( empty($errors) ) {
-                $sql = "INSERT INTO cars (user_id, mark_id, model_id, car_register_number)
-                VALUES ('$user_id', '$mark_id', '$model_id', '$car_register_number')";
+                $date = date('Y-m-d H:i:s');
+                $sql = "INSERT INTO cars (user_id, mark_id, model_id, car_register_number, car_create_date)
+                VALUES ('$user_id', '$mark_id', '$model_id', '$car_register_number', '$date')";
                 
                 \DB::get()->query($sql);
                 $request->to('cars&action=view');

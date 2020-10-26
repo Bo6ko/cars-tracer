@@ -45,11 +45,12 @@ class User extends Controller {
             }
 
             if ( empty($errors) ) {
-                $sql = "INSERT INTO users (user_email, user_password)
-                VALUES ('$user_email', '$user_password')";
+                $date = date('Y-m-d H:i:s');
+                $sql = "INSERT INTO users (user_email, user_password, user_create_date)
+                VALUES ('$user_email', '$user_password', '$date')";
                 
                 \DB::get()->query($sql);
-                $request->to('login');
+                $request->to('user&action=login');
             } else {
                 $this->view->assign('errors', $errors);
                 $this->view->assign('data', $request->getPost());
@@ -78,8 +79,9 @@ class User extends Controller {
 
             if ( empty($errors) ) {
                 //add session
-                $_SESSION["identity"] = true;
-                $_SESSION["user_id"] = $user_id;
+                $_SESSION["identity"]   = true;
+                $_SESSION["user_id"]    = $user_id;
+                $_SESSION["user_email"] = $user_email;
                 $request->to('cars');
             } else {
                 $this->view->assign('errors', $errors);
@@ -95,6 +97,7 @@ class User extends Controller {
         if (!isset($_SESSION)) return;
         unset($_SESSION['identity']);
         unset($_SESSION['user_id']);
+        unset($_SESSION["user_email"]);
         $request->to('user&action=login');
     }
 

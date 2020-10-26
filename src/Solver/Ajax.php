@@ -28,3 +28,40 @@ function getModelsByMark() {
     exit();
 }
 
+function filterCarExpenseByMonth() {
+    if ( isset($_POST) ) {
+        extract($_POST);
+    } else {
+        return;
+    }
+
+    $max_day_for_month = cal_days_in_month(CAL_GREGORIAN, $month, $year);
+    if ( $month < 10 ) {
+        $month = '0' . $month;
+    }
+    $from_date  = $year . '-' . $month . '-01'; 
+    $to_date    = $year . '-' . $month . '-' . $max_day_for_month;
+
+    if ( isset($user_id) && intval($user_id) > 0 ) {
+        $user_id = intval($user_id);
+    }
+    if ( isset($car_id) && intval($car_id) > 0 ) {
+        $car_id = intval($car_id);
+    }
+
+    $sql = 'select * from car_expenses as ce
+            inner join cars as c ON c.car_id = ce.car_id
+            where c.user_id = '. $user_id .' and ce.car_id = ' . $car_id . '
+            AND (ce.expense_create_date > "'.$from_date.'" and ce.expense_create_date < "'.$to_date.'")
+            order by ce.expense_id';
+    $car_expense = \DB::get()->query( $sql );
+
+    $results = [];
+    foreach( $car_expense as $key => $value ) {
+        $results[$key] = $value;
+    }
+
+    echo json_encode(['status' => true, 'results' => $results]);
+    exit();
+}
+

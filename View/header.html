@@ -12,7 +12,9 @@
 <body>
     <div class="content">
         <?php if ( isset($_SESSION['identity']) ) : ?>
-        <div>Welcome ..name</div>
+            <?php if ( isset($_SESSION['user_email']) ) : ?>
+                <div>Welcome: <span style="color:blue"><?= $_SESSION['user_email']; ?></span></div>
+            <?php endif; ?>
         <ul class="nav">
             <li><a href="?controller=cars">Dashboard</a></li>
             <li><a href="?controller=user&action=logout">Logout</a></li>
